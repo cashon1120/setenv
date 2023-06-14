@@ -1,3 +1,4 @@
 本地开发环境修改工具
 
-./src/config/index.ts 为输入文件目录
+./env/** 为配置环境文件
+./src/config/index.ts 为输出文件目录
