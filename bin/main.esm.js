@@ -16,7 +16,7 @@ const getParams = (file) => {
     return fileContent;
 };
 
-const DEFAULT_PATH = "./src/config/index.ts";
+const DEFAULT_OUTPUT_PATH = "./src/config/envVariable.ts";
 const setEnv = (envName, outputPath) => {
     const filePath = `./env/${envName}`;
     if (!envName) {
@@ -37,7 +37,7 @@ const setEnv = (envName, outputPath) => {
     }
     const file = fs.readFileSync(filePath, "utf-8");
     const content = `${getParams(file)}`;
-    fs.writeFileSync(outputPath || DEFAULT_PATH, content);
+    fs.writeFileSync(outputPath || DEFAULT_OUTPUT_PATH, content);
     console.log(chalk.green(`[success] 已将环境设置为: ${envName}`));
     console.log(chalk.yellow("[warning] 如果是APP打包,请注意iOS的环境!!!"));
 };
@@ -93,7 +93,6 @@ const openFolder = async () => {
 };
 
 const createImageType = (path = './src/assets') => {
-    console.log(123);
     const files = fs.readdirSync(path);
     let Images = {};
     let interfaceStr = {};
@@ -106,6 +105,10 @@ const createImageType = (path = './src/assets') => {
             Images[name] = `require(./${item})`;
         }
     });
+    if (Object.keys(Images).length === 0) {
+        console.log(chalk.yellow('[warning] 没有找到图片，请核对图片所在路径'));
+        return;
+    }
     Images = JSON.stringify(Images, null, '\t');
     Images = Images.replace(/:\s"/g, ': ');
     Images = Images.replace(/\(/g, '("');
@@ -116,7 +119,7 @@ const createImageType = (path = './src/assets') => {
     interfaceStr = interfaceStr.replace(/,/g, ';');
     interfaceStr = interfaceStr.replace(/"/g, '');
     const string = `import {ImageSourcePropType} from 'react-native';\nexport interface ImagesProps${interfaceStr}\nconst Images: ImagesProps = ${Images} \nexport default Images`;
-    fs.writeFileSync('./src/assets/Images.ts', string);
+    fs.writeFileSync(`${path}/Images.ts`, string);
 };
 
 // envVersion，表示传入的参数可能是版本号，也可能是环境名

@@ -1,7 +1,7 @@
+import chalk from 'chalk';
 import fs from 'fs'
 
 const createImageType = (path = './src/assets') => {
-  console.log(123)
   const files = fs.readdirSync(path);
   let Images: any = {};
   let interfaceStr: any = {};
@@ -14,6 +14,10 @@ const createImageType = (path = './src/assets') => {
       Images[name] = `require(./${item})`;
     }
   });
+  if(Object.keys(Images).length === 0){
+    console.log(chalk.yellow('[warning] 没有找到图片，请核对图片所在路径'))
+    return
+  }
   Images = JSON.stringify(Images, null, '\t');
   Images = Images.replace(/:\s"/g, ': ');
   Images = Images.replace(/\(/g, '("');
@@ -26,7 +30,7 @@ const createImageType = (path = './src/assets') => {
   interfaceStr = interfaceStr.replace(/"/g, '');
   
   const string = `import {ImageSourcePropType} from 'react-native';\nexport interface ImagesProps${interfaceStr}\nconst Images: ImagesProps = ${Images} \nexport default Images`;
-  fs.writeFileSync('./src/assets/Images.ts', string);
+  fs.writeFileSync(`${path}/Images.ts`, string);
 }
 
 export default createImageType

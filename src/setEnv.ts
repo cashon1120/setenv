@@ -1,7 +1,7 @@
 import fs from "fs";
 import chalk from "chalk";
 import getParams from "./util";
-const DEFAULT_PATH = "./src/config/index.ts";
+const DEFAULT_OUTPUT_PATH = "./src/config/envVariable.ts";
 
 const setEnv = (envName: string, outputPath?: string) => {
     const filePath = `./env/${envName}`;
@@ -24,7 +24,7 @@ const setEnv = (envName: string, outputPath?: string) => {
     }
     const file = fs.readFileSync(filePath, "utf-8");
     const content = `${getParams(file)}`;
-    fs.writeFileSync(outputPath || DEFAULT_PATH, content);
+    fs.writeFileSync(outputPath || DEFAULT_OUTPUT_PATH, content);
     console.log(chalk.green(`[success] 已将环境设置为: ${envName}`));
     console.log(chalk.yellow("[warning] 如果是APP打包,请注意iOS的环境!!!"));
   };
