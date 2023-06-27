@@ -10,6 +10,12 @@ const [envName, outputPath] = process.argv.splice(2);
 const filePath = `./env/${envName}`;
 
 const writeFile = () => {
+
+  if(!envName){
+    console.log(chalk.redBright('请输入环境名称, 如 development / production'));
+    return
+  }
+
   if (outputPath) {
     const existPath = fs.existsSync(outputPath);
     if (!existPath) {
