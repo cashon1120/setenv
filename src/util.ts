@@ -1,4 +1,4 @@
-const getParams = file => {
+const getParams = (file: string) => {
   const keys = file.split('\n');
   let fileContent = '';
   keys.forEach((str, index) => {
