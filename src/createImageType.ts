@@ -1,7 +1,8 @@
 import chalk from 'chalk';
 import fs from 'fs'
 
-const createImageType = (path = './src/assets') => {
+const createImageType = (params: any) => {
+  const {path} = params;
   const files = fs.readdirSync(path);
   let Images: any = {};
   let interfaceStr: any = {};

@@ -1,7 +1,8 @@
 import fs from "fs";
 import chalk from "chalk";
 
-const setVersion = (version: string) => {
+const setVersion = (params: any) => {
+  const version = params.version;
   if(!version || version.length !== 11){
     console.log(chalk.red('请输入正确的版本号, 如 x.xx.xxxxxx'))
     return
@@ -16,7 +17,7 @@ const setVersion = (version: string) => {
   
   fs.writeFileSync('./android/app/build.gradle', androidFile);
   
-  console.log(chalk.green('Android版本号修改成功(versionName:' + version, 'versionCode: ' + versionCode + ')'))
+  console.log(chalk.green('[success] Android版本号修改成功(versionName:' + version, 'versionCode: ' + versionCode + ')'))
 }
 
 export default setVersion

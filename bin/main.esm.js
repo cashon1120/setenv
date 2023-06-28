@@ -17,32 +17,37 @@ const getParams = (file) => {
 };
 
 const DEFAULT_OUTPUT_PATH = "./src/config/envVariable.ts";
-const setEnv = (envName, outputPath) => {
-    const filePath = `./env/${envName}`;
-    if (!envName) {
+const setEnv = (params) => {
+    const { env, outputPath = DEFAULT_OUTPUT_PATH, isBuild } = params;
+    const envFilePath = `./env/${env}`;
+    if (!env) {
         console.log(chalk.red('[error] 请输入环境名称, 如 development/production'));
         return;
     }
-    if (outputPath) {
-        const existPath = fs.existsSync(outputPath);
-        if (!existPath) {
-            console.log(chalk.red(`[error] ${outputPath}, 该输出目录文件不存在`));
-            return;
-        }
-    }
-    const existEnvFile = fs.existsSync(filePath);
-    if (!existEnvFile) {
-        console.log(chalk.red(`[error] ${envName}, 该输配置文件不存在`));
+    const existEnvFilePath = fs.existsSync(envFilePath);
+    if (!existEnvFilePath) {
+        console.log(chalk.red(`[error] ${env}, 该输配置文件不存在`));
         return;
     }
-    const file = fs.readFileSync(filePath, "utf-8");
+    const existOutputPath = fs.existsSync(outputPath);
+    if (!existOutputPath) {
+        console.log(chalk.red(`[error] ${outputPath}, 该输出目录文件不存在`));
+        return;
+    }
+    const file = fs.readFileSync(envFilePath, "utf-8");
     const content = `${getParams(file)}`;
-    fs.writeFileSync(outputPath || DEFAULT_OUTPUT_PATH, content);
-    console.log(chalk.green(`[success] 已将环境设置为: ${envName}`));
-    console.log(chalk.yellow("[warning] 如果是APP打包,请注意iOS的环境!!!"));
+    fs.writeFileSync(outputPath, content);
+    if (isBuild) {
+        console.log(chalk.green(`[success] 已将环境设置为: ${env}, 开始打包Android...`));
+    }
+    else {
+        console.log(chalk.green(`[success] 已将环境设置为: ${env}`));
+    }
+    console.log(chalk.yellow("[warning] 如果打包,请注意iOS的环境,最好先打包Android再打包iOS!!!"));
 };
 
-const setVersion = (version) => {
+const setVersion = (params) => {
+    const version = params.version;
     if (!version || version.length !== 11) {
         console.log(chalk.red('请输入正确的版本号, 如 x.xx.xxxxxx'));
         return;
@@ -53,7 +58,7 @@ const setVersion = (version) => {
     androidFile = androidFile.replace(/versionCode \d+/, `versionCode ${versionCode}`);
     androidFile = androidFile.replace(/versionName \".+\"/, `versionName "${version}"`);
     fs.writeFileSync('./android/app/build.gradle', androidFile);
-    console.log(chalk.green('Android版本号修改成功(versionName:' + version, 'versionCode: ' + versionCode + ')'));
+    console.log(chalk.green('[success] Android版本号修改成功(versionName:' + version, 'versionCode: ' + versionCode + ')'));
 };
 
 const openFolder = async () => {
@@ -92,7 +97,8 @@ const openFolder = async () => {
     }
 };
 
-const createImageType = (path = './src/assets') => {
+const createImageType = (params) => {
+    const { path } = params;
     const files = fs.readdirSync(path);
     let Images = {};
     let interfaceStr = {};
@@ -122,31 +128,39 @@ const createImageType = (path = './src/assets') => {
     fs.writeFileSync(`${path}/Images.ts`, string);
 };
 
-// envVersion，表示传入的参数可能是版本号，也可能是环境名
-const tools = ["version", "env", "open", "createImageType"];
+const tools = [
+    { name: "version", fun: setVersion },
+    { name: "env", fun: setEnv },
+    { name: "openFolder", fun: openFolder },
+    { name: "createImageType", fun: createImageType },
+];
+const showDetail = () => {
+    console.log(`请输入以下方法:
+version:         设置安卓版本号(e.g: apptool version:1.23.010101);
+env:             设置当前环境参数(e.g: apptool env:production);
+openFolder:      打开安卓打包文件夹,同时会把安装包命名为新的版本号;
+createImageType: 给图片添加ts类型, 可指定图片所在路径;(e.g: createIMageType path:./src/assets)`);
+};
 (function () {
-    // params: 第二个参：版本号 / 环境名称 / 图片路径
-    const [toolType, params, outputPath] = process.argv.splice(2);
-    if (!toolType || !tools.includes(toolType)) {
-        console.log(`请输入以下方法:
-version: 设置安卓版本号(e.g: apptool version 1.23.010101)
-env: 设置当前环境参数(e.g: apptool env production)
-open: 打开安卓打包文件夹
-createImageType: 给图片添加ts类型, 可指定图片所在路径`);
+    const args = process.argv.splice(2);
+    const params = {};
+    if (args[0] === "-h") {
+        showDetail();
         return;
     }
-    switch (toolType) {
-        case "version":
-            setVersion(params);
+    args.forEach((param) => {
+        const [key, value] = param.split(":");
+        params[key] = key === "isBuild" ? true : value;
+    });
+    let isValiad = false;
+    for (let i = 0; i < tools.length; i++) {
+        if (params[tools[i].name]) {
+            isValiad = true;
+            tools[i].fun(params);
             break;
-        case "env":
-            setEnv(params, outputPath);
-            break;
-        case "open":
-            openFolder();
-            break;
-        case "createImageType":
-            createImageType(params);
-            break;
+        }
+    }
+    if (!isValiad) {
+        showDetail();
     }
 })();
