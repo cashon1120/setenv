@@ -86,7 +86,7 @@ const openFolder = async () => {
             }
             else {
                 getSize(`${filePath}${version}.apk`).then((res) => {
-                    console.log(chalk.green(`[success] 版本号: ${version}, 文件大小: ${res}MB`));
+                    console.log(chalk.green(`[success] 包目录已打开, 版本号: ${version}, 文件大小: ${res}MB`));
                 });
             }
         });
@@ -150,9 +150,10 @@ createImageType: 给图片添加ts类型, 可指定图片所在路径;(e.g: crea
     }
     args.forEach((param) => {
         const [key, value] = param.split(":");
-        params[key] = key === "isBuild" ? true : value;
+        params[key] = value || true;
     });
     let isValiad = false;
+    console.log(params);
     for (let i = 0; i < tools.length; i++) {
         if (params[tools[i].name]) {
             isValiad = true;
@@ -161,6 +162,7 @@ createImageType: 给图片添加ts类型, 可指定图片所在路径;(e.g: crea
         }
     }
     if (!isValiad) {
+        console.log(chalk.red(`[error] 命令不正确 ${args}`));
         showDetail();
     }
 })();

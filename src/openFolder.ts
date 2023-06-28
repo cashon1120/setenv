@@ -32,7 +32,7 @@ const openFolder = async () => {
         } else {
           getSize(`${filePath}${version}.apk`).then((res) => {
             console.log(
-              chalk.green(`[success] 版本号: ${version}, 文件大小: ${res}MB`)
+              chalk.green(`[success] 包目录已打开, 版本号: ${version}, 文件大小: ${res}MB`)
             );
           });
         }
