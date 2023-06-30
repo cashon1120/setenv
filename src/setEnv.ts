@@ -28,10 +28,11 @@ const setEnv = (params: any) => {
     fs.writeFileSync(outputPath, content);
     if(isBuild){
       console.log(chalk.green(`[success] 已将环境设置为: ${env}, 开始打包Android...`));
+      console.log(chalk.yellow("[warning] 请注意iOS的环境,最好先打包Android再打包iOS!!!"));
     }else{
       console.log(chalk.green(`[success] 已将环境设置为: ${env}`));
     }
-    console.log(chalk.yellow("[warning] 如果打包,请注意iOS的环境,最好先打包Android再打包iOS!!!"));
+    
   };
 
   export default setEnv
