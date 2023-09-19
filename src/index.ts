@@ -34,7 +34,6 @@ createImageType: 给图片添加ts类型, 可指定图片所在路径;(e.g: crea
     params[key] = value || true;
   });
   let isValiad = false;
-  console.log(params);
   for (let i = 0; i < tools.length; i++) {
     if (params[tools[i].name]) {
       isValiad = true;

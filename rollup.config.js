@@ -1,6 +1,7 @@
 import rollupTypescript from "rollup-plugin-typescript2";
 import clear from "rollup-plugin-clear";
-import commonjs from 'rollup-plugin-commonjs'
+import commonjs from "rollup-plugin-commonjs";
+import terser from "@rollup/plugin-terser";
 import typescript from "typescript";
 
 export default {
@@ -13,6 +14,7 @@ export default {
       typescript: typescript,
     }),
     commonjs(),
+    terser(),
   ],
   output: [
     {
