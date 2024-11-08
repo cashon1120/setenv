@@ -4,6 +4,7 @@ import setEnv from "./setEnv";
 import setVersion from "./setVersion";
 import openFolder from "./openFolder";
 import createImageType from "./createImageType";
+import copyDrawboard from "./copydrawboard";
 import chalk from "chalk";
 
 const tools = [
@@ -11,6 +12,7 @@ const tools = [
   { name: "env", fun: setEnv },
   { name: "openFolder", fun: openFolder },
   { name: "createImageType", fun: createImageType },
+  { name: "copyDrawboard", fun: copyDrawboard },
 ];
 
 const showDetail = () => {
@@ -18,7 +20,10 @@ const showDetail = () => {
 version:         设置安卓版本号(e.g: apptool version:1.23.010101);
 env:             设置当前环境参数(e.g: apptool env:production);
 openFolder:      打开安卓打包文件夹,同时会把安装包命名为新的版本号;
-createImageType: 给图片添加ts类型, 可指定图片所在路径;(e.g: createIMageType path:./src/assets)`
+createImageType: 给图片添加ts类型, 可指定图片所在路径;(e.g: createIMageType path:./src/assets)
+copyDrawboard:   复制drawboard打好的包到门店和pad的webview下
+`
+
   );
 };
 
